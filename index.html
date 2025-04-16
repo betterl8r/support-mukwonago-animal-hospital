@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>The Mukwonago Animal Hospital needs your help!</title>
+  <meta name="description" content="Use this quick form to email the Village Board and speak up for your pets and the Mukwonago Animal Hospital.">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 40px;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    p {
+      text-align: center;
+      font-size: 1.1em;
+      color: #333;
+      margin-top: -10px;
+      margin-bottom: 30px;
+    }
+
+    form {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 15px;
+      color: #444;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      box-sizing: border-box;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 12px 20px;
+      background: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+    }
+
+    button:hover {
+      background: #004d99;
+    }
+  </style>
+</head>
+<body>
+  <h1>The Mukwonago Animal Hospital needs your help!</h1>
+  <p>Speak up for your pets by using this form to email the Village Board.</p>
+
+  <form id="emailForm">
+    <label>
+      Your Name:
+      <input type="text" id="name" required>
+    </label>
+
+    <label>
+      Your Email:
+      <input type="email" id="email" required>
+    </label>
+
+    <label>
+      Your Pet's Name(s) (optional):<br>
+      <input type="text" id="pets" placeholder="Leave blank or enter names like Max, Bella, Charlie">
+    </label>
+
+    <button type="submit">Generate Email</button>
+  </form>
+
+  <script>
+    document.getElementById('emailForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const petsRaw = document.getElementById('pets').value.trim();
+
+      const petList = petsRaw.split(',').map(p => p.trim()).filter(Boolean);
+
+      let openingLine;
+      if (petList.length === 0) {
+        openingLine = "I am writing to ask";
+      } else if (petList.length === 1) {
+        openingLine = `My pet ${petList[0]} and I are writing to ask`;
+      } else {
+        const allButLast = petList.slice(0, -1).join(', ');
+        const last = petList.slice(-1);
+        openingLine = `My pets ${allButLast}, and ${last} and I are writing to ask`;
+      }
+
+      const subject = encodeURIComponent("Please Delay Approval of Kiwanis Park Project");
+
+      const body = encodeURIComponent(
+        `Dear Mukwonago Village Board of Trustees,
+
+` +
+        `${openingLine} that the Mukwonago Village Board of Trustees delay its approval of the Kiwanis Park project until the developer negotiates in good faith with Mukwonago Animal Hospital, which could have its access restricted or even closed!
+
+` +
+        `MAH has been a part of the community for more than two decades. Let's treat them as well as they treat our pets!
+
+` +
+        `Sincerely,
+${name} (${email})`
+      );
+
+      const mailtoLink = `mailto:Stephanie.reidsimons@gmail.com?subject=${subject}&body=${body}`;
+      window.location.href = mailtoLink;
+    });
+  </script>
+</body>
+</html>
