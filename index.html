@@ -93,21 +93,71 @@
     </label>
 
     <p style="font-style: italic; font-size: 0.95em; color: #555; margin-top: 20px;">
-  Don’t worry — you’ll get a chance to check the email before it sends. And we won’t keep any info you enter here or use it to sell you anything.
-</p>
+      Don’t worry — you’ll get a chance to check the email before it sends. And we won’t keep any info you enter here or use it to sell you anything.
+    </p>
 
     <button type="submit">Generate Email</button>
   </form>
 
+  <div id="emailFallback" style="margin-top: 40px; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+    <h2 style="font-size: 1.2em; margin-bottom: 10px;">Having trouble sending?</h2>
+    <p style="margin-bottom: 10px;">If clicking the button above doesn't open your email app, you can:</p>
+    <ul style="margin-bottom: 15px;">
+      <li><a href="#" id="gmailLink" target="_blank">Click here to open the email in Gmail</a></li>
+      <li>Or copy and paste the message below into your email service:</li>
+    </ul>
+    <textarea id="emailText" rows="12" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;"></textarea>
+    <button onclick="copyEmail()" style="margin-top: 10px; padding: 10px 15px; background: #0066cc; color: white; border: none; border-radius: 5px; cursor: pointer;">Copy to Clipboard</button>
+    <p id="copyMessage" style="margin-top: 10px; color: green; display: none;">Copied!</p>
+  </div>
+
   <script>
+    function copyEmail() {
+      const emailText = document.getElementById("emailText");
+      emailText.select();
+      document.execCommand("copy");
+      document.getElementById("copyMessage").style.display = "block";
+    }
+
+    function populateFallback(name, email, pets) {
+      const petList = pets.split(',').map(p => p.trim()).filter(Boolean);
+      let openingLine = "I am writing to ask";
+      if (petList.length === 1) {
+        openingLine = `My pet ${petList[0]} and I are writing to ask`;
+      } else if (petList.length > 1) {
+        const allButLast = petList.slice(0, -1).join(', ');
+        const last = petList.slice(-1);
+        openingLine = `My pets ${allButLast}, and ${last} and I are writing to ask`;
+      }
+
+      const message = 
+`Dear Mukwonago Village Board of Trustees,
+
+${openingLine} that the Mukwonago Village Board of Trustees delay its approval of the Kiwanis Park project until the developer negotiates in good faith with Mukwonago Animal Hospital, which could have its access moved or severely restricted!
+
+MAH has been a part of the community for more than two decades. Let's treat them as well as they treat our pets!
+
+Sincerely,
+${name} (${email})`;
+
+      document.getElementById("emailText").value = message;
+
+      const to = "president@villageofmukwonago.gov,dporter@villageofmukwonago.gov,ebrill@villageofmukwonago.gov,sreeves@villageofmukwonago.gov,djohnson@villageofmukwonago.gov,jmeiners@villageofmukwonago.gov,kjohnson@villageofmukwonago.gov";
+      const subject = "Please Delay Approval of Kiwanis Park Project";
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(to)}&bcc=hereformah@gmail.com&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+      document.getElementById("gmailLink").href = gmailUrl;
+    }
+
     document.getElementById('emailForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
       const name = document.getElementById('name').value.trim();
       const email = document.getElementById('email').value.trim();
-      const petsRaw = document.getElementById('pets').value.trim();
+      const pets = document.getElementById('pets').value.trim();
 
-      const petList = petsRaw.split(',').map(p => p.trim()).filter(Boolean);
+      populateFallback(name, email, pets);
+
+      const petList = pets.split(',').map(p => p.trim()).filter(Boolean);
 
       let openingLine;
       if (petList.length === 0) {
